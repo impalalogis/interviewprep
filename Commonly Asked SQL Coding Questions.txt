@@ -1,0 +1,44 @@
+Commonly Asked SQL Coding Questions in Interviews (2025)
+
+Basic SQL Coding Questions
+1. Write an SQL query to fetch the second-highest salary from an `Employee` table.
+2. Write an SQL query to get the duplicate records from a table.
+3. Write a query to find the employees who earn more than their managers.
+4. Write an SQL query to retrieve the top `N` records from a table.
+5. Write an SQL query to count the number of employees in each department.
+6. Write a query to find the department with the highest number of employees.
+7. Write a query to retrieve employees who have the same salary.
+8. Write an SQL query to list all employees whose name starts with 'A'.
+9. Write an SQL query to get the last record from a table.
+10. Write a query to get employees who joined in the last 6 months.
+
+Intermediate SQL Coding Questions
+11. Write an SQL query to find the `Nth` highest salary from a table.
+12. Write a query to remove duplicate rows from a table without using `DISTINCT`.
+13. Write a query to find missing numbers in a sequence of IDs.
+14. Write an SQL query to display the first and last name in a single column.
+15. Write an SQL query to get the cumulative sum of salaries for each employee.
+16. Write an SQL query to swap the values of two columns without using a third variable.
+17. Write a query to fetch employees whose names contain only vowels.
+18. Write an SQL query to transpose rows into columns.
+19. Write an SQL query to find the employees with the highest salary in each department.
+20. Write a query to find customers who made multiple purchases on the same day.
+
+Advanced SQL Coding Questions
+21. Write a query to get the moving average of sales for the last 3 months.
+22. Write an SQL query to rank employees by salary in each department.
+23. Write an SQL query to find employees who have more than one manager.
+24. Write a query to retrieve the most frequent order date from an `Orders` table.
+25. Write an SQL query to compare two tables and find mismatched records.
+26. Write an SQL query to calculate the difference between consecutive rows.
+27. Write a query to pivot table data dynamically.
+28. Write a query to delete every alternate row from a table.
+29. Write an SQL query to get the first purchase date for each customer.
+30. Write an SQL query to get the running total of sales per month.
+
+Window Functions & Analytical Queries
+31. Write an SQL query to assign a rank to employees based on their salaries.
+32. Write an SQL query to find the percentage contribution of each employee’s salary to the total salary.
+33. Write a query to find the cumulative sum of sales using a window function.
+34. Write an SQL query to get the difference between two consecutive transactions.
+35. Write an SQL query to find the `LEAD()` and `LAG()` salary for each employee.
