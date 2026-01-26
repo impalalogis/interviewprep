@@ -1,0 +1,6 @@
+gspread
+google-auth
+pandas
+requests
+streamlit
+pyyaml
