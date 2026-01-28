@@ -1,0 +1,13 @@
+resume:
+  profile_sheet: profile
+  education_sheet: education
+  experience_sheet: experience
+  projects_sheet: projects
+  skills_sheet: skills
+  photo_url_key: photo_url
+  photo_path_key: photo_path
+  resume_pdf_url_key: resume_pdf_url
+  resume_pdf_path_key: resume_pdf_path
+
+interview:
+  questions_sheet: questions
