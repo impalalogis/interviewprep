@@ -4,7 +4,7 @@ Recruiter‑friendly Streamlit app that renders a resume and a dynamic interview
 
 ## Features
 - **Resume page** sourced from Google Sheets with profile photo, structured sections, and a PDF download button.
-- **Interview prep page** with category grouping, search, add/update flows, and live Google Sheets sync.
+- **Interview prep page** with per‑worksheet sections, search, add/update flows, and live Google Sheets sync.
 - **Modular architecture** for reuse and easy extension.
 - **Config + secrets** separated for industry‑standard deployment.
 
@@ -43,7 +43,7 @@ Create `.streamlit/secrets.toml` based on the template:
 ```
 cp .streamlit/secrets.toml.template .streamlit/secrets.toml
 ```
-Update values with your Google service account and spreadsheet ID.
+Update values with your Google service account and the two spreadsheet IDs (resume + interview).
 
 ### 3) Configure app behavior
 Edit `config/app_config.yaml` to set worksheet names and field keys.
@@ -57,7 +57,7 @@ streamlit run app.py
 
 ## Google Sheets Schema
 
-### Profile (worksheet: `profile`)
+### Profile (worksheet: `profile`) — Resume Sheet
 | key | value |
 |-----|-------|
 | name | Your name |
@@ -88,8 +88,10 @@ Recommended worksheets:
 - `projects`
 - `skills` (columns: `category`, `skills`)
 
-### Interview questions (worksheet: `questions`)
-Recommended columns:
+### Interview questions — Interview Sheet
+Each worksheet is treated as a separate interview section/page.
+
+Recommended columns per worksheet:
 | category | question | answer | difficulty | tags |
 |----------|----------|--------|-----------|------|
 

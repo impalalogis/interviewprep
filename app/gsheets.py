@@ -33,15 +33,26 @@ def get_gspread_client():
 
 
 @st.cache_resource
-def get_spreadsheet():
+def get_spreadsheet(
+    sheet_id: str | None = None,
+    sheet_url: str | None = None,
+    secret_id_key: str | None = None,
+    secret_url_key: str | None = None,
+):
     client = get_gspread_client()
-    sheet_id = st.secrets.get("spreadsheet_id")
-    sheet_url = st.secrets.get("spreadsheet_url")
+    if not sheet_id and secret_id_key:
+        sheet_id = st.secrets.get(secret_id_key)
+    if not sheet_url and secret_url_key:
+        sheet_url = st.secrets.get(secret_url_key)
+    if not sheet_id:
+        sheet_id = st.secrets.get("spreadsheet_id")
+    if not sheet_url:
+        sheet_url = st.secrets.get("spreadsheet_url")
     if sheet_id:
         return client.open_by_key(sheet_id)
     if sheet_url:
         return client.open_by_url(sheet_url)
-    st.error("Set spreadsheet_id or spreadsheet_url in st.secrets.")
+    st.error("Set spreadsheet_id/spreadsheet_url or resume/interview sheet IDs in st.secrets.")
     st.stop()
 
 

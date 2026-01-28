@@ -13,13 +13,20 @@ st.set_page_config(page_title="Resume and Interview Prep", page_icon=":briefcase
 def main():
     sidebar_setup_help()
     config = load_app_config()
-    spreadsheet = get_spreadsheet()
+    resume_spreadsheet = get_spreadsheet(
+        secret_id_key="resume_spreadsheet_id",
+        secret_url_key="resume_spreadsheet_url",
+    )
+    interview_spreadsheet = get_spreadsheet(
+        secret_id_key="interview_spreadsheet_id",
+        secret_url_key="interview_spreadsheet_url",
+    )
 
     page = st.sidebar.selectbox("Navigate", ["Resume", "Interview Prep"])
     if page == "Resume":
-        resume_page(spreadsheet, config)
+        resume_page(resume_spreadsheet, config)
     else:
-        interview_prep_page(spreadsheet, config)
+        interview_prep_page(interview_spreadsheet, config)
 
 
 if __name__ == "__main__":

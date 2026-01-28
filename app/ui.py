@@ -58,7 +58,8 @@ def sidebar_setup_help():
         st.write("Add these to .streamlit/secrets.toml:")
         st.code(
             """
-spreadsheet_id = "YOUR_SHEET_ID"
+resume_spreadsheet_id = "RESUME_SHEET_ID"
+interview_spreadsheet_id = "INTERVIEW_SHEET_ID"
 
 [gcp_service_account]
 type = "service_account"
