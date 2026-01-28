@@ -7,8 +7,12 @@ from app.ui import find_column
 def interview_prep_page(spreadsheet, config):
     st.title("Interview Preparation")
 
-    questions_sheet = config["interview"]["questions_sheet"]
-    worksheet_name = st.text_input("Questions worksheet name", value=questions_sheet)
+    worksheet_titles = [ws.title for ws in spreadsheet.worksheets()]
+    if not worksheet_titles:
+        st.warning("No worksheets found in the interview spreadsheet.")
+        return
+    default_sheet = config["interview"].get("questions_sheet", worksheet_titles[0])
+    worksheet_name = st.sidebar.selectbox("Interview Section", worksheet_titles, index=worksheet_titles.index(default_sheet) if default_sheet in worksheet_titles else 0)
     try:
         worksheet = spreadsheet.worksheet(worksheet_name)
     except Exception:
@@ -23,29 +27,37 @@ def interview_prep_page(spreadsheet, config):
         st.warning("No questions found. Add rows in Google Sheets to populate.")
         return
 
-    category_col = find_column(df, ["category", "topic", "section"]) or "category"
-    question_col = find_column(df, ["question", "prompt"]) or "question"
-    answer_col = find_column(df, ["answer", "response"]) or "answer"
+    category_col = find_column(df, ["category", "topic", "section"])
+    question_col = find_column(df, ["question", "prompt"])
+    answer_col = find_column(df, ["answer", "response"])
     difficulty_col = find_column(df, ["difficulty", "level"])
     tags_col = find_column(df, ["tags", "tag"])
 
-    categories = sorted([c for c in df[category_col].dropna().unique()]) if category_col in df else []
-    selected_category = st.selectbox("Category", ["All"] + categories)
+    if not question_col and len(df.columns) > 0:
+        question_col = df.columns[0]
+    if not answer_col and len(df.columns) > 1:
+        answer_col = df.columns[1]
+
+    categories = sorted([c for c in df[category_col].dropna().unique()]) if category_col and category_col in df else []
+    selected_category = st.selectbox("Category", ["All"] + categories) if categories else "All"
     search = st.text_input("Search questions")
 
     filtered = df.copy()
-    if selected_category != "All" and category_col in filtered:
+    if selected_category != "All" and category_col and category_col in filtered:
         filtered = filtered[filtered[category_col] == selected_category]
     if search:
         mask = filtered[question_col].astype(str).str.contains(search, case=False, na=False)
-        if answer_col in filtered:
+        if answer_col and answer_col in filtered:
             mask = mask | filtered[answer_col].astype(str).str.contains(search, case=False, na=False)
         filtered = filtered[mask]
 
-    for category, group in (
-        filtered.groupby(category_col) if category_col in filtered else [("Questions", filtered)]
-    ):
-        st.subheader(category)
+    grouped = (
+        filtered.groupby(category_col)
+        if category_col and category_col in filtered
+        else [(worksheet_name, filtered)]
+    )
+    for category, group in grouped:
+        st.subheader(category if category else worksheet_name)
         for _, row in group.iterrows():
             question = str(row.get(question_col, "")).strip()
             if not question:
@@ -63,7 +75,9 @@ def interview_prep_page(spreadsheet, config):
     st.divider()
     st.subheader("Add a new question")
     with st.form("add_question_form"):
-        new_category = st.text_input("Category")
+        new_category = ""
+        if category_col:
+            new_category = st.text_input("Category", value=worksheet_name)
         new_question = st.text_area("Question")
         new_answer = st.text_area("Answer")
         new_difficulty = st.text_input("Difficulty (optional)")
@@ -74,11 +88,11 @@ def interview_prep_page(spreadsheet, config):
         row = []
         for header in headers:
             h = header.lower()
-            if h == category_col.lower():
+            if category_col and h == category_col.lower():
                 row.append(new_category)
-            elif h == question_col.lower():
+            elif question_col and h == question_col.lower():
                 row.append(new_question)
-            elif h == answer_col.lower():
+            elif answer_col and h == answer_col.lower():
                 row.append(new_answer)
             elif difficulty_col and h == difficulty_col.lower():
                 row.append(new_difficulty)
@@ -99,7 +113,9 @@ def interview_prep_page(spreadsheet, config):
         row_num = int(selected.split(":")[0])
         existing = df[df["_row"] == row_num].iloc[0].to_dict()
         with st.form("edit_question_form"):
-            edit_category = st.text_input("Category", value=str(existing.get(category_col, "")))
+            edit_category = ""
+            if category_col:
+                edit_category = st.text_input("Category", value=str(existing.get(category_col, "")))
             edit_question = st.text_area("Question", value=str(existing.get(question_col, "")))
             edit_answer = st.text_area("Answer", value=str(existing.get(answer_col, "")))
             edit_difficulty = st.text_input(
@@ -113,9 +129,12 @@ def interview_prep_page(spreadsheet, config):
             updated = st.form_submit_button("Update question")
         if updated:
             header_map = {h.lower(): i + 1 for i, h in enumerate(worksheet.row_values(1))}
-            worksheet.update_cell(row_num, header_map[category_col.lower()], edit_category)
-            worksheet.update_cell(row_num, header_map[question_col.lower()], edit_question)
-            worksheet.update_cell(row_num, header_map[answer_col.lower()], edit_answer)
+            if category_col:
+                worksheet.update_cell(row_num, header_map[category_col.lower()], edit_category)
+            if question_col:
+                worksheet.update_cell(row_num, header_map[question_col.lower()], edit_question)
+            if answer_col:
+                worksheet.update_cell(row_num, header_map[answer_col.lower()], edit_answer)
             if difficulty_col:
                 worksheet.update_cell(row_num, header_map[difficulty_col.lower()], edit_difficulty)
             if tags_col:
