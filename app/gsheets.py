@@ -46,9 +46,9 @@ def get_spreadsheet():
 
 
 @st.cache_data(ttl=60)
-def read_worksheet_df(spreadsheet, title):
+def read_worksheet_df(_spreadsheet, title):
     try:
-        worksheet = spreadsheet.worksheet(title)
+        worksheet = _spreadsheet.worksheet(title)
     except gspread.WorksheetNotFound:
         return pd.DataFrame()
     records = worksheet.get_all_records()
